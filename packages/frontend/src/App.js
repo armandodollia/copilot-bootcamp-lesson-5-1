@@ -135,9 +135,6 @@ function App() {
     
     setSelectedItem(item);
     setItemDetailsOpen(true);
-    
-    console.log('[App] Attempting to update user preferences - this will cause an error');
-    updateUserPreferences(mode, permissions, validationLevel);
   };
 
   const handleItemDetailsSave = async (itemData) => {
