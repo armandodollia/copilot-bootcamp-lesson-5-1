@@ -64,6 +64,46 @@ function ItemDetails({
   customFields,
   permissions
 }) {
+  console.log('[ItemDetails] Component rendered');
+  console.log('[ItemDetails] Props:', {
+    open,
+    onClose,
+    itemId,
+    itemName,
+    itemDescription,
+    itemCategory,
+    itemPriority,
+    itemTags,
+    itemStatus,
+    itemDueDate,
+    itemAssignee,
+    itemCreatedBy,
+    itemCreatedAt,
+    itemUpdatedAt,
+    showAdvanced,
+    enableNotifications,
+    autoSave,
+    readOnly,
+    onSave,
+    onDelete,
+    onUpdate,
+    onStatusChange,
+    onPriorityChange,
+    onCategoryChange,
+    onTagsChange,
+    onAssigneeChange,
+    onDueDateChange,
+    onDescriptionChange,
+    onNameChange,
+    allowEdit,
+    allowDelete,
+    showHistory,
+    historyData,
+    validationRules,
+    customFields,
+    permissions
+  });
+
   const [localName, setLocalName] = useState(itemName || '');
   const [localDescription, setLocalDescription] = useState(itemDescription || '');
   const [localCategory, setLocalCategory] = useState(itemCategory || '');
@@ -75,6 +115,20 @@ function ItemDetails({
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(true);
   const [isDirty, setIsDirty] = useState(false);
+
+  console.log('[ItemDetails] Local state initialized:', {
+    localName,
+    localDescription,
+    localCategory,
+    localPriority,
+    localTags,
+    localStatus,
+    localDueDate,
+    localAssignee,
+    errors,
+    isValid,
+    isDirty
+  });
 
   // Dead code - unused variables and functions
   const unusedVariable = 'This is never used';
@@ -93,7 +147,10 @@ function ItemDetails({
 
   // This useEffect has a bug - missing dependency
   useEffect(() => {
+    console.log('[ItemDetails] useEffect triggered - has missing dependency bug');
+    console.log('[ItemDetails] itemId:', itemId);
     if (itemId) {
+      console.log('[ItemDetails] Attempting to fetch item details - this will cause an error');
       // This will cause a runtime error because fetchItemDetails is not defined
       fetchItemDetails(itemId);
     }
@@ -101,22 +158,46 @@ function ItemDetails({
 
   // Missing error handling and logging in this function
   const handleSave = () => {
-    // No validation or error handling
-    const updatedItem = {
-      id: itemId,
-      name: localName,
-      description: localDescription,
-      category: localCategory,
-      priority: localPriority,
-      tags: localTags,
-      status: localStatus,
-      dueDate: localDueDate,
-      assignee: localAssignee
-    };
+    console.log('[ItemDetails] handleSave called');
+    console.log('[ItemDetails] Current local state:', {
+      localName,
+      localDescription,
+      localCategory,
+      localPriority,
+      localTags,
+      localStatus,
+      localDueDate,
+      localAssignee
+    });
     
-    // This might fail but no error handling
-    onSave(updatedItem);
-    setIsDirty(false);
+    try {
+      // No validation or error handling
+      const updatedItem = {
+        id: itemId,
+        name: localName,
+        description: localDescription,
+        category: localCategory,
+        priority: localPriority,
+        tags: localTags,
+        status: localStatus,
+        dueDate: localDueDate,
+        assignee: localAssignee
+      };
+      
+      console.log('[ItemDetails] Built updated item:', updatedItem);
+      
+      // This might fail but no error handling
+      if (onSave) {
+        console.log('[ItemDetails] Calling onSave callback');
+        onSave(updatedItem);
+      }
+      
+      setIsDirty(false);
+      console.log('[ItemDetails] handleSave completed successfully');
+    } catch (error) {
+      console.error('[ItemDetails] Error in handleSave:', error.message);
+      console.error('[ItemDetails] Full error details:', error);
+    }
   };
 
   // Function with long parameter list that should be refactored
@@ -209,23 +290,39 @@ function ItemDetails({
   };
 
   const handleInputChange = (field, value) => {
+    console.log('[ItemDetails] handleInputChange called');
+    console.log('[ItemDetails] Field:', field, 'Value:', value);
+    
     setIsDirty(true);
     
     switch (field) {
       case 'name':
+        console.log('[ItemDetails] Updating name field');
         setLocalName(value);
         // Missing validation and logging
-        onNameChange(value);
+        if (onNameChange) {
+          console.log('[ItemDetails] Calling onNameChange callback');
+          onNameChange(value);
+        }
         break;
       case 'description':
+        console.log('[ItemDetails] Updating description field');
         setLocalDescription(value);
-        onDescriptionChange(value);
+        if (onDescriptionChange) {
+          console.log('[ItemDetails] Calling onDescriptionChange callback');
+          onDescriptionChange(value);
+        }
         break;
       case 'category':
+        console.log('[ItemDetails] Updating category field');
         setLocalCategory(value);
-        onCategoryChange(value);
+        if (onCategoryChange) {
+          console.log('[ItemDetails] Calling onCategoryChange callback');
+          onCategoryChange(value);
+        }
         break;
       case 'priority':
+        console.log('[ItemDetails] Updating priority field');
         setLocalPriority(value);
         onPriorityChange(value);
         break;
@@ -242,14 +339,27 @@ function ItemDetails({
         onAssigneeChange(value);
         break;
       default:
+        console.log('[ItemDetails] Unhandled field type:', field);
         // No logging of unhandled cases
         break;
     }
+    
+    console.log('[ItemDetails] handleInputChange completed');
   };
 
   // This will cause a runtime error because formatDateTime is not defined
   const formatCreatedDate = (date) => {
-    return formatDateTime(date, 'yyyy-MM-dd HH:mm');
+    console.log('[ItemDetails] formatCreatedDate called with date:', date);
+    console.log('[ItemDetails] Attempting to call formatDateTime - this will cause an error');
+    try {
+      const formatted = formatDateTime(date, 'yyyy-MM-dd HH:mm');
+      console.log('[ItemDetails] Date formatted successfully:', formatted);
+      return formatted;
+    } catch (error) {
+      console.error('[ItemDetails] Error formatting date:', error.message);
+      console.error('[ItemDetails] Full error details:', error);
+      return date; // Return original date as fallback
+    }
   };
 
   return (

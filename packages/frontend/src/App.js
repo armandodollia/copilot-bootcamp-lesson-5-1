@@ -29,6 +29,8 @@ import ItemService from './utils/ItemService';
 import './App.css';
 
 function App() {
+  console.log('[App] App component rendered');
+  
   const [data, setData] = useState([]);
   const [detailedItems, setDetailedItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,36 +40,58 @@ function App() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [itemService] = useState(new ItemService());
 
+  console.log('[App] State initialized:', {
+    data: data.length,
+    detailedItems: detailedItems.length,
+    loading,
+    error,
+    newItem,
+    itemDetailsOpen,
+    selectedItem,
+    itemService: !!itemService
+  });
+
   useEffect(() => {
+    console.log('[App] useEffect triggered - fetching initial data');
     fetchData();
     fetchDetailedItems();
   }, []);
 
   const fetchData = async () => {
+    console.log('[App] fetchData called');
     try {
       setLoading(true);
+      console.log('[App] Making request to /api/items');
       const response = await fetch('/api/items');
+      console.log('[App] Response received:', response.status, response.statusText);
       if (!response.ok) {
+        console.error('[App] Request failed with status:', response.status);
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
+      console.log('[App] Data fetched successfully:', result.length, 'items');
       setData(result);
       setError(null);
     } catch (err) {
+      console.error('[App] Error fetching data:', err);
       setError('Failed to fetch data: ' + err.message);
-      console.error('Error fetching data:', err);
     } finally {
       setLoading(false);
+      console.log('[App] fetchData completed');
     }
   };
 
   const fetchDetailedItems = async () => {
+    console.log('[App] fetchDetailedItems called');
     try {
+      console.log('[App] Making request to /api/items/details');
       const response = await fetch('/api/items/details');
+      console.log('[App] Response received:', response.status, response.statusText);
       const result = await response.json();
+      console.log('[App] Detailed items fetched successfully:', result.length, 'items');
       setDetailedItems(result);
     } catch (err) {
-      console.error('Error fetching detailed items:', err);
+      console.error('[App] Error fetching detailed items:', err);
     }
   };
 
@@ -89,8 +113,30 @@ function App() {
     customFields,
     templateId
   ) => {
+    console.log('[App] handleItemDetailsOpen called');
+    console.log('[App] Parameters:', {
+      item,
+      mode,
+      permissions,
+      validationLevel,
+      notificationSettings,
+      auditEnabled,
+      backupEnabled,
+      showAdvanced,
+      enableNotifications,
+      autoSave,
+      readOnly,
+      allowEdit,
+      allowDelete,
+      showHistory,
+      customFields,
+      templateId
+    });
+    
     setSelectedItem(item);
     setItemDetailsOpen(true);
+    
+    console.log('[App] Attempting to update user preferences - this will cause an error');
     updateUserPreferences(mode, permissions, validationLevel);
   };
 
